@@ -26,7 +26,8 @@ import {
     signInWithPopup,
     signInWithRedirect,
     GoogleAuthProvider,
-    createUserWithEmailAndPassword
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
 
 } from "firebase/auth"
 
@@ -60,13 +61,13 @@ provider.setCustomParameters({
 })
 
 export const auth = getAuth();
-export const signInWithGooglePopup = ()=> signInWithPopup(auth, provider)
+export const signInWithGooglePopup = ()=> signInWithPopup(auth, provider);
 
 
 //Acess database , db object directly points to object of firestore database
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async(userAuth)=>{
+export const createUserDocumentFromAuth = async(userAuth, additionalInformation={})=>{
     const userDocRef = doc(db,'users', userAuth.uid);
     console.log(userDocRef)
     const user = await getDoc(userDocRef);
@@ -75,7 +76,7 @@ export const createUserDocumentFromAuth = async(userAuth)=>{
         const createdAt = new Date();
         try{
             await setDoc(userDocRef,{
-                displayName, email, createdAt
+                displayName, email, createdAt,...additionalInformation
             })
         }catch(error) {
             console.log('error creating while user', error.message)
@@ -90,6 +91,15 @@ export const createAuthUserWithEmailAndPassword = async (email, passowrd)=>{
     if(!email || !passowrd) return;
 
     return await createUserWithEmailAndPassword(auth , email , passowrd)
+
+
+}
+
+
+export const signInAuthUserWithEmailAndPassword = async (email, passowrd)=>{
+    if(!email || !passowrd) return;
+
+    return await signInWithEmailAndPassword(auth , email , passowrd)
 
 
 }

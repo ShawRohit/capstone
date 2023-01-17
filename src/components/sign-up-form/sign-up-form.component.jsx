@@ -3,6 +3,7 @@ import { useState } from "react";
 import Button from '../button/button.component';
 
 import FormInput from "../form-input/form-input.component";
+import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from '../../utils/firebase/firebase.utils';
 
 
 const defaultFormFeilds = {
@@ -20,9 +21,40 @@ const SignUpForm = ()=>{
 
     const handleChange = (event) =>{
         const {name, value} = event.target;
-        setFormFeilds({...formFields,[name]:value})
+        setFormFeilds({...formFields,[name]: value})
+    }
+
+    const resetFormFields = ()=>{
+        setFormFeilds(defaultFormFeilds)
     }
   
+
+    const handleSubmit = async (event)=>{
+        event.preventDefault();
+        if(password !== confirmPassword){
+            alert('Passwords do not match');
+            return
+        }
+        try{
+            //code
+            const {user} = await createAuthUserWithEmailAndPassword(email, password);
+            await createUserDocumentFromAuth(user,{displayName})
+            resetFormFields()
+        }catch(error){
+            console.log(error)
+        }
+
+
+
+
+
+
+
+
+
+
+
+    }
     return  (
         <div className="sign-up-container">
             <h2>Don't have an account</h2>
@@ -30,7 +62,7 @@ const SignUpForm = ()=>{
                 Sign up with your email and password
             </span>
 
-            <form onSubmit={()=>{}}>
+            <form onSubmit={handleSubmit}>
                
                 <FormInput label="Display Name" type="text" required onChange={handleChange} name="displayName" value={displayName}/>
 
@@ -41,7 +73,8 @@ const SignUpForm = ()=>{
                 <FormInput label="Password" type="password" required onChange={handleChange} name="password" value={password}/>
 
           
-                <FormInput label="Confirm password" type="password" required onChange={handleChange} name="confirmPassowrd" value={confirmPassword}/>
+                <FormInput label="Confirm password" type="password" required onChange={handleChange} name="confirmPassword" value={confirmPassword}/>
+                
                 <Button type="submit" >Sign up</Button>
             </form>
         </div>
