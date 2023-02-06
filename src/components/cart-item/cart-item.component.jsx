@@ -1,8 +1,12 @@
+import { useContext } from 'react';
 import './cart-item.styles.scss';
+import { CartContext } from '../../contexts/cart.context';
 
 const CartItem = ({cartItem})=>{
     const {name,quantity, price,imageUrl} = cartItem;
-    console.log(cartItem)
+  
+    
+
     
     return(
         <div className="cart-item-container">
